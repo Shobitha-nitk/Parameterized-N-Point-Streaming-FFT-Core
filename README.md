@@ -79,14 +79,7 @@ Parameterized-N-Point-Streaming-FFT-Core/
 │   └── fft256.xdc                   # Timing/pin constraints
 ├── bit/
 │   └── fft256_top.bit               # Bit stream 
-├── images/ 
-│   ├── output.jpg                    
-│   ├── layout.jpg                  
-│   ├── slice.jpg
-│   ├── power_thermal.jpg
-│   ├── rtl_components.jpg
-│   ├── timing.jpg
-│   ├── utilisation.jpg        
+├── images/        
 └── README.md
 ```
 
@@ -161,3 +154,8 @@ The core features runtime parameter scaling (`parameter FFT_POINTS = 256`). Adju
 | **Memory Footprint (FFs/LUTs)** | **Increases Linearly** (Total delay memory = $N-1$ words) | **Decreases** (Saves massive FPGA fabric slices) |
 | **Pipeline Latency** | **Increases** (Requires $N-1$ cycles before `out_valid`) | **Decreases** (Faster initial frame flushing) |
 | **Hardware Stages** | **Increases** ($\log_2(N)$ layout calculation scale) | **Decreases** (Fewer structural modules needed) |
+
+## Future Work
+
+* **Massively Pipelined Multi-Butterfly Architecture:** Scale up the current processing throughput by deploying a multi-path, deeply pipelined array of parallel butterfly units per stage instead of relying on a single, sequential engine. This spatial hardware expansion allows the core to process multiple complex data samples simultaneously on every single clock edge, making it capable of handling ultra-high-bandwidth RF and radar processing applications.
+* **Pre-FFT Windowing Front-End (Spectral Leakage Mitigation):** Integrate a synthesizable, hardware-based windowing block (supporting Hann or Hamming configurations) right before Stage 1. Multiplying incoming time-domain samples by precomputed window coefficients on-the-fly smooths out frame boundary discontinuities, suppressing side-lobe energy and eliminating spectral leakage before the signal is processed by the FFT core.

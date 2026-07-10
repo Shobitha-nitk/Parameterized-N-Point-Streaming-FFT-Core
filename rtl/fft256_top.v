@@ -28,15 +28,6 @@ module fft256_top #(
     assign stage_re[0] = din_re;
     assign stage_im[0] = din_im;
 
-    // FIX: cumulative pipeline latency (in cycles) a sample has already
-    // accrued by the time it reaches the INPUT of stage s. Each
-    // fft_sdf_stage instance adds exactly (DELAY + 1) cycles of latency
-    // -- DELAY cycles for its internal FIFO, +1 for its output register.
-    // Stage 0 sees data the same cycle master_counter updates, so it
-    // needs zero compensation; every later stage needs its twiddle
-    // address generated from master_counter AS IT WAS that many cycles
-    // ago, not its current value, or the twiddle factor applied is the
-    // one meant for a different (later) sample entirely.
     function integer cum_latency;
         input integer stage;
         integer k;
@@ -63,13 +54,8 @@ module fft256_top #(
             wire [7:0] aligned_counter;
 
             if (CUM_LAT == 0) begin : no_delay
-                // Stage 0: no compensation needed, data arrives same cycle.
                 assign aligned_counter = master_counter;
             end else begin : delay_chain
-                // Shift register that reproduces master_counter's value
-                // from CUM_LAT cycles ago, time-aligning the address
-                // generator with the sample actually present at this
-                // stage's butterfly/multiplier this cycle.
                 reg [7:0] delay_regs [0:CUM_LAT-1];
                 integer d;
                 always @(posedge clk or negedge rst_n) begin
@@ -112,10 +98,7 @@ module fft256_top #(
         end
     endgenerate
     // --- 4. True Latency Pipeline Validity Tracker ---
-    // Unchanged: 264 = sum(DELAY) + 8 stage output regs + 1 output reg.
-    // This budget was already correct for data-path latency; the bug
-    // fixed above was in the TWIDDLE ADDRESS timing, not the data path,
-    // so this counter does not need to change.
+    
     reg [263:0] latency_pipe;
     
     always @(posedge clk or negedge rst_n) begin

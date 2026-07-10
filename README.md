@@ -56,20 +56,6 @@ Data samples stream through cascading processing blocks sequentially. Internal f
                              |  +----------+  +---------------+
                              +----------------------------------------+
 ```
-
-**Key structural elements**
-
-| Block | Description |
-|---|---|
-| Master frame counter | 8-bit counter (0–255) tracking the incoming sample index |
-| Cascaded stages | 8 instances of `fft_sdf_stage`, DELAY halving each stage: 128, 64, 32, …, 1 |
-| Shift-register FIFO | Per-stage delay line; buffers samples during the "buffering" half of the frame |
-| Butterfly ALU | Combinational adder/subtractor pair, computing Sum/Diff, scaled by `>>>1` for growth control |
-| Twiddle ROM | Combinational LUT (`twiddle_rom.v`) holding pre-computed `Wₙᵏ` coefficients in Q15 format |
-| Complex multiplier | 4-multiplier / 2-adder cross-multiply, rotating the butterfly difference before the next stage |
-| Delay-compensated counter | Per-stage shift-register chain that re-aligns `master_counter` with each stage's own pipeline latency, so the correct twiddle address is used for the sample actually present at that stage |
-| Latency/valid tracker | 264-bit shift register that raises `out_valid` once the full pipeline (8 stages + output register) has filled |
-
 ---
 ## Repository Structure
 
@@ -104,50 +90,16 @@ Parameterized-N-Point-Streaming-FFT-Core/
 └── README.md
 ```
 
-
-##  Hardware Compilation & Verification
-
-The core has been fully synthesized and implemented with complete timing closure.
-
-* **Target Hardware Device:** Digilent Nexys Video (`XC7A200T-1SBG484C`)
-* **Generated Hardware Artifact:** `fft256_top.bit`
-* **Port Verification Constraint Override:** Handled via `BITSTREAM.GENERAL.UNCONSTRAINEDPINS {Allow}` to accommodate floating parallel 64-bit wide streaming data nets on physical evaluation board targets.
-
-### Behavioral Waveform Verification
-![Simulation Waveform](simulation_waveform.png)
-*Description: Simulation capture proving streaming throughput. Output data flag `out_valid` asserts immediately upon initial pipeline flush latency completion.*
-
-### Target Silicon Routing Layout
-![Hardware Layout](hardware_layout.png)
-*Description: Post-implementation routing floorplan map showing localized logic cell allocations across active FPGA die slices.*
-
-
-
-
-
 ## Simulation Results
-
-Testbench stimulus: two sinusoidal input cases sampled at **12 kHz**, fed sample-by-sample into `din_re` (with `din_im = 0`), verifying that the FFT output places energy in the expected bin.
+Testbench stimulus: sinusoidal input of frequencies 1kHz and 5kHz sampled at **12 kHz**, fed sample-by-sample into `din_re` (with `din_im = 0`), verifying that the FFT output places energy in the expected bin.
 
 - **256-point FFT, Fs = 12 kHz → bin resolution ≈ 46.875 Hz/bin**
 - 1 kHz tone → expected peak near bin ⌊1000 / 46.875⌋ ≈ **bin 21**
 - 5 kHz tone → expected peak near bin ⌊5000 / 46.875⌋ ≈ **bin 107**
+  
+Frequency spectrum for sinusoidal input of frequencies 1kHz and 5kHz sampled at 12kHz
+![Simulation Waveform](simulation_waveform.png)
 
-### 1 kHz Input Tone
-
-![1 kHz simulation output](docs/images/sim_1khz.png)
-
-*Time-domain stimulus (top) and FFT magnitude output (bottom) for a 1 kHz sinusoid sampled at 12 kHz — spectral peak observed at the expected bin.*
-
-### 5 kHz Input Tone
-
-![5 kHz simulation output](docs/images/sim_5khz.png)
-
-*Time-domain stimulus (top) and FFT magnitude output (bottom) for a 5 kHz sinusoid sampled at 12 kHz.*
-
-> Replace the placeholder images above with your actual waveform/spectrum plots (e.g. exported from GTKWave + a Python/matplotlib post-processing script, or a Vivado simulator screenshot) at `docs/images/sim_1khz.png` and `docs/images/sim_5khz.png`.
-
----
 
 ## Implementation Results (Silicon / FPGA Layout)
 
@@ -157,6 +109,13 @@ Target part: **xc7z010clg400-1 (Zynq-7000)**, `sys_clk` = 50 MHz (20 ns period).
 
 *Post-implementation floorplan showing FFT butterfly/multiplier logic placed across the two SLR/clock-region quadrants (X0Y0–X1Y1) of the xc7z010.*
 
+##  Hardware Compilation & Verification
+
+The core has been fully synthesized and implemented with complete timing closure.
+
+* **Target Hardware Device:** Digilent Nexys Video (`XC7A200T-1SBG484C`)
+* **Generated Hardware Artifact:** `fft256_top.bit`
+* **Port Verification Constraint Override:** Handled via `BITSTREAM.GENERAL.UNCONSTRAINEDPINS {Allow}` to accommodate floating parallel 64-bit wide streaming data nets on physical evaluation board targets.
 
 ##  Parametric Scaling Characteristics
 

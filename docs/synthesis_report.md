@@ -19,7 +19,7 @@ The design fully meets all user-specified timing constraints with comfortable sa
 ![](slice.jpg)
 
 ### Elaborated RTL Component Info
-![](rtl_component.jpg)
+![](rtl_components.jpg)
 
 
 

@@ -97,49 +97,45 @@ Testbench stimulus: sinusoidal input of frequencies 1kHz and 5kHz sampled at **1
 - 1 kHz tone → expected peak near bin ⌊1000 / 46.875⌋ ≈ **bin 21**
 - 5 kHz tone → expected peak near bin ⌊5000 / 46.875⌋ ≈ **bin 107**
   
-Frequency spectrum for sinusoidal input of frequencies 1kHz and 5kHz sampled at 12kHz
-![Simulation Waveform](simulation_waveform.png)
+![Frequency spectrum](images/output.jpg)
 
 ## Vivado Synthesis & Implementation Report
-
-This report provides the detailed hardware metrics, timing data, resource utilization, and power analysis for the Parameterized streaming FFT core implemented on Xilinx silicon.
-
-# 1. Target Device Profile
+### 1. Target Device Profile
 * **Product Family:** Zynq-7000
 * **Device Part:** xc7z010clg400-1
 
 
-# 2. Design Timing Summary
+### 2. Design Timing Summary
 The design fully meets all user-specified timing constraints with comfortable safety margins and zero failing endpoints.
 
-![](timing.jpg)
+![](images/timing.jpg)
 
 
-# 3. Hardware Resource Utilization
+### 3. Hardware Resource Utilization
 
  Slice Logic Metrics
-![](slice.jpg)
+![](images/slice.jpg)
 
  Elaborated RTL Component Info
-![](rtl_components.jpg)
+![](images/rtl_components.jpg)
 
 
 
-# 4. Power & Thermal Analysis
+### 4. Power & Thermal Analysis
 Power metrics extracted from the post-implementation netlist activity.
-![](power_thermal.jpg)
+![](images/power_thermal.jpg)
 
 
 
-# 5. Sub-System Utilisation Breakdown
-![](utilisation.jpg)
+### 5. Sub-System Utilisation Breakdown
+![](images/utilisation.jpg)
 )
 
 ## Implementation Results (Silicon / FPGA Layout)
 
 Target part: **xc7z010clg400-1 (Zynq-7000)**, `sys_clk` = 50 MHz (20 ns period).
 
-![Post-implementation device layout](docs/images/layout.png)
+![Post-implementation device layout](images/layout.jpg)
 
 *Post-implementation floorplan showing FFT butterfly/multiplier logic placed across the two SLR/clock-region quadrants (X0Y0–X1Y1) of the xc7z010.*
 

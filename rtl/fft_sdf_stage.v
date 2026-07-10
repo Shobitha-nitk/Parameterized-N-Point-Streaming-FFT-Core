@@ -46,8 +46,7 @@ module fft_sdf_stage #(
         end
     end
     // --- 3. Arithmetic Butterfly Combinational Core ---
-    // FIX: explicit sign-extend before add/sub so growth-by-1-bit isn't
-    // truncated by the tool evaluating the sum at 16 bits before the shift.
+   
     reg signed [WIDTH-1:0] bt_x_re, bt_x_im; 
     reg signed [WIDTH-1:0] bt_y_re, bt_y_im; 
     
@@ -75,7 +74,6 @@ module fft_sdf_stage #(
         end
     end
 // --- 5. Complex Twiddle Multiplication Block ---
-    // Fix: Use 32767 to represent +1.0 in Q15 to match your Python generation script
     wire signed [WIDTH-1:0] true_w_re = (phase == 0) ? w_re : 16'sd32767; 
     wire signed [WIDTH-1:0] true_w_im = (phase == 0) ? w_im : 16'sd0;
 

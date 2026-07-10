@@ -80,8 +80,8 @@ Parameterized-N-Point-Streaming-FFT-Core/
 ├── bit/
 │   └── fft256_top.bit               # Bit stream 
 ├── images/ 
-│   ├── output.jpg                   # Simulation output 
-│   ├── layout.jpg                   # Post-implementation silicon/FPGA layout
+│   ├── output.jpg                    
+│   ├── layout.jpg                  
 │   ├── slice.jpg
 │   ├── power_thermal.jpg
 │   ├── rtl_components.jpg
@@ -96,7 +96,7 @@ Testbench stimulus: sinusoidal input of frequencies 1kHz and 5kHz sampled at **1
 - **256-point FFT, Fs = 12 kHz → bin resolution ≈ 46.875 Hz/bin**
 - 1 kHz tone → expected peak near bin ⌊1000 / 46.875⌋ ≈ **bin 21**
 - 5 kHz tone → expected peak near bin ⌊5000 / 46.875⌋ ≈ **bin 107**
-  
+#### Frequency Spectrum  
 ![Frequency spectrum](images/output.jpg)
 
 ## Vivado Synthesis & Implementation Report
@@ -106,30 +106,34 @@ Testbench stimulus: sinusoidal input of frequencies 1kHz and 5kHz sampled at **1
 
 
 ### 2. Design Timing Summary
-The design fully meets all user-specified timing constraints with comfortable safety margins and zero failing endpoints.
+#### The design fully meets all user-specified timing constraints with comfortable safety margins and zero failing endpoints.
 
 ![](images/timing.jpg)
 
 
 ### 3. Hardware Resource Utilization
 
- Slice Logic Metrics
-![](images/slice.jpg)
+#### Slice Logic Metrics
+<div align="left">
+  <img src="images/slice.jpg" alt="Slice Logic Metrics" width="600" />
+</div>
 
- Elaborated RTL Component Info
-![](images/rtl_components.jpg)
+#### Elaborated RTL Component Info
+<div align="left">
+  <img src="images/rtl_components.jpg" alt="Elaborated RTL Component Info" width="600" />
+</div>
 
 
 
 ### 4. Power & Thermal Analysis
-Power metrics extracted from the post-implementation netlist activity.
+
+#### Power metrics extracted from the post-implementation netlist activity.
 ![](images/power_thermal.jpg)
 
 
 
 ### 5. Sub-System Utilisation Breakdown
 ![](images/utilisation.jpg)
-)
 
 ## Implementation Results (Silicon / FPGA Layout)
 
